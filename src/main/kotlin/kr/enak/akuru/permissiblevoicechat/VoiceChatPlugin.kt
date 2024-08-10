@@ -1,14 +1,13 @@
 package kr.enak.akuru.permissiblevoicechat
 
-import de.maxhenkel.voicechat.Voicechat
 import de.maxhenkel.voicechat.api.VoicechatPlugin
-import de.maxhenkel.voicechat.api.events.*
+import de.maxhenkel.voicechat.api.events.EventRegistration
+import de.maxhenkel.voicechat.api.events.JoinGroupEvent
+import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent
 import de.maxhenkel.voicechat.plugins.impl.PositionImpl
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
 import java.util.logging.Logger
 
@@ -24,7 +23,6 @@ class VoiceChatPlugin(
     override fun registerEvents(registration: EventRegistration) {
         super.registerEvents(registration)
         registration.registerEvent(VoicechatServerStartedEvent::class.java, this::onServerStart)
-        registration.registerEvent(PlayerConnectedEvent::class.java, this::onPlayerJoin)
         registration.registerEvent(JoinGroupEvent::class.java, this::onJoinGroup)
         registration.registerEvent(MicrophonePacketEvent::class.java, this::onMic)
     }
@@ -37,16 +35,6 @@ class VoiceChatPlugin(
 
         this.uniqueId = group.id
         logger.info("전체방송 그룹 생성 완료: $uniqueId")
-    }
-
-    private fun onPlayerJoin(event: PlayerConnectedEvent) {
-        val player = Bukkit.getPlayer(event.connection.player.uuid)?: return
-        if (!player.isOp) return logger.info("플레이어 $player 는 관리자가 아님.")
-
-        val manager = Voicechat.SERVER.server.groupManager
-        val group = manager.getGroup(uniqueId)?: return logger.warning("그룹 $uniqueId 이 없음")
-        manager.joinGroup(group, player, "")
-        logger.info("플레이어 $player 를 $GROUP_NAME 에 넣음")
     }
 
     private fun onJoinGroup(event: JoinGroupEvent) {
