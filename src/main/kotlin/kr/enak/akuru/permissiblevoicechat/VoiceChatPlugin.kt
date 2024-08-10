@@ -38,7 +38,7 @@ class VoiceChatPlugin(
     }
 
     private fun onJoinGroup(event: JoinGroupEvent) {
-        if (event.group?.name != "전체방송" || (event.connection?.player?.player as? org.bukkit.entity.Player)?.isOp == true)
+        if (event.group?.name != GROUP_NAME || (event.connection?.player?.player as? org.bukkit.entity.Player)?.isOp == true)
             return
 
         event.cancel()
@@ -51,7 +51,7 @@ class VoiceChatPlugin(
             return
         }
 
-        if (event.senderConnection?.group?.name == "전체방송") {
+        if (event.senderConnection?.group?.name == GROUP_NAME) {
             val api = event.voicechat
 
             Bukkit.getOnlinePlayers().forEach { receiver ->
